@@ -1,4 +1,4 @@
----
+                                                                                 ---
 # Source: opensearch/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
@@ -19,7 +19,7 @@ spec:
     matchLabels:
       app.kubernetes.io/name: opensearch
       app.kubernetes.io/instance: opensearch
-  replicas: 1
+  replicas: 2
   podManagementPolicy: Parallel
   updateStrategy:
     type: RollingUpdate
