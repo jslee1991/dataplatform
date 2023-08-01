@@ -2,14 +2,24 @@
 # Source: opensearch/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
-	  spec:
+metadata:
+  name: opensearch-cluster-data
+  labels:
+    helm.sh/chart: opensearch-2.4.1
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/instance: opensearch
+    app.kubernetes.io/version: "2.2.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: opensearch-cluster-data
+  annotations:
+    majorVersion: "2"
+spec:
+  serviceName: opensearch-cluster-data-headless
+  selector:
     matchLabels:
       app.kubernetes.io/name: opensearch
       app.kubernetes.io/instance: opensearch
   replicas: 1
-  podManagementPolicy: Parallel
-  updateStrategy:
-    type: RollingUpdate
   podManagementPolicy: Parallel
   updateStrategy:
     type: RollingUpdate
