@@ -1,6 +1,7 @@
 데이터 수집 쿠버네티스 패키지
 
 1. KAFKA operator
+
     k apply -f kafka/operator
 
 
