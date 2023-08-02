@@ -1,1 +1,1 @@
-IMAGES upload to harbor
+docker images, need uploading to harbor
