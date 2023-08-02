@@ -4,7 +4,6 @@
 
     k apply -f kafka/operator
 
-
 2. KAFKA CRDS
   k apply -f kafka/crds
 
