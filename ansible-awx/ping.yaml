@@ -1,0 +1,5 @@
+- hosts: webserver
+  gather_facts: no
+  remote_user: ubuntu
+  roles:
+    - ping
