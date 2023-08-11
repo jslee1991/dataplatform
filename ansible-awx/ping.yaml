@@ -2,6 +2,5 @@
   gather_facts: no
   remote_user: ubuntu
   tasks:
-   - name: Print a message
-     debug:
-       msg: 'Here Ya Go'
+    - name: disable selinux
+      command: echo "test"
