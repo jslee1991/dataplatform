@@ -1,5 +1,7 @@
 - hosts: dp1
   gather_facts: no
   remote_user: ubuntu
-  roles:
-    - ping
+  tasks:
+   - name: Print a message
+     debug:
+       msg: 'Here Ya Go'
