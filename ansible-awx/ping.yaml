@@ -1,4 +1,4 @@
-- hosts: webserver
+- hosts: dp1
   gather_facts: no
   remote_user: ubuntu
   roles:
