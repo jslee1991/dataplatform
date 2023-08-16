@@ -1,5 +1,6 @@
-- name: test awx
+- name: SCM Git Sample
   hosts: all
   tasks:
-    - name: disable selinux
-      command: echo "test"
+    - name: Hello Message
+      debug:
+        msg: "Hello SCM Type is Git!"
