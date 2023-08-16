@@ -1,6 +1,4 @@
 - hosts: all
-  gather_facts: no
-  remote_user: root
   tasks:
     - name: disable selinux
       command: echo "test"
