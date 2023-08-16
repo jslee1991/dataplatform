@@ -90,7 +90,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /mnt/f/dev/data/sonarqube-data
+    path: /tmp/sonar/data
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -105,7 +105,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /mnt/f/dev/data/sonarqube-logs
+    path: /tmp/sonar/logs
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -120,7 +120,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /mnt/f/dev/data/sonarqube-extensions
+    path: /tmp/sonar/exten
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

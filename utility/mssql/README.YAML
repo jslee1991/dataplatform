@@ -1,0 +1,8 @@
+$) k apply -f .
+
+$) k exec -it mssql-deply bash
+$) sqlcmd -U sa
+$) MyC0m9l&xP@ssw0rd
+sql) create database sonarqube;
+sql) go;
+
