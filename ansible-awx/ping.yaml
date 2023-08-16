@@ -1,4 +1,5 @@
-- hosts: all
+- name: test awx
+  hosts: all
   tasks:
     - name: disable selinux
       command: echo "test"
