@@ -1,0 +1,6 @@
+- hosts: k8s-master
+  gather_facts: no
+  remote_user: ubuntu
+  tasks:
+    - name: disable selinux
+      command: echo "test"
