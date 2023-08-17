@@ -1,6 +1,6 @@
-- hosts: k8s-master
-  gather_facts: no
-  remote_user: ubuntu
+- name: SCM Git Sample
+  hosts: all
   tasks:
-    - name: disable selinux
-      command: echo "test"
+    - name: Hello Message
+      debug:
+        msg: "Hello SCM Type is Git!"
