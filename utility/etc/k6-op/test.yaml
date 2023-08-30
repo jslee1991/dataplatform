@@ -1,0 +1,18 @@
+apiVersion: k6.io/v1alpha1
+kind: K6
+metadata:
+  name: k6-sample
+spec:
+  arguments: -o xk6-prometheus-rw --tag testid=test
+  parallelism: 1
+  runner:
+    env:
+    - name: K6_PROMETHEUS_RW_SERVER_URL
+      value: http://192.168.0.50:30003/api/v1/write
+    - name: K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM
+      value: "true"
+    image: grafana/k6
+  script:
+    configMap:
+      file: scritps.js
+      name: test-script
