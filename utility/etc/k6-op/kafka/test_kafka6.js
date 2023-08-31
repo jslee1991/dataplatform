@@ -22,7 +22,7 @@ export default function () {
     },
   };
 
-  const url = 'http://192.168.0.50:32041/topics/test-topic'
+  const url = 'http://192.168.0.50:32041/topics/test-topic6'
 
   const requestBody = {"records":[{"value":"YmxhaGJsYWg="}]}
 		//		{
