@@ -114,6 +114,11 @@ data:
         static_configs:
                 - targets: ["10.0.15.148:8080","10.0.15.148:8081","10.0.15.158:8080","10.0.15.158:8081"]
 
+      - job_name: 'loki-exporter'
+        static_configs:
+                - targets: ["10.0.15.148:3100"]
+
+
       - job_name: 'haproxy-exporter'
         static_configs:
                 - targets: ["10.0.15.148:8404","10.0.15.148:9101"]
