@@ -1,4 +1,4 @@
-4444444444444444444444444444444##### INSTALL K8S MASTER ON UBUNTU #####
+##### INSTALL K8S MASTER ON UBUNTU #####
 ## sh install_master.sh > result.log ##
 
 #!/bin/bash
