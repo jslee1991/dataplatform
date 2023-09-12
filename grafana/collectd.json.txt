@@ -1,0 +1,763 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 5,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 2,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "10.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum by (type)(rate(collectd_cpu_total[5m]))",
+          "interval": "",
+          "legendFormat": "{{type}}",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "CPU ",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 4,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "10.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum by (memory) (rate(collectd_memory[5m]))",
+          "interval": "",
+          "legendFormat": "{{memory}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 0,
+        "y": 9
+      },
+      "hiddenSeries": false,
+      "id": 6,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "10.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_dropped_rx_total{interface=\"eth0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "eth_rx",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_dropped_tx_total{interface=\"eth0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "eth_tx",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_dropped_rx_total{interface=\"lo\"}[5m]))",
+          "interval": "",
+          "legendFormat": "lo_rx",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_dropped_tx_total{interface=\"lo\"}[5m]))",
+          "interval": "",
+          "legendFormat": "lo_tx",
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_dropped_rx_total{interface=\"docker0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "docker0-rx",
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_dropped_tx_total{interface=\"docker0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "docker0-tx",
+          "refId": "F"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Interface Dropped",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 6,
+        "y": 9
+      },
+      "hiddenSeries": false,
+      "id": 8,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "10.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_errors_rx_total{interface=\"eth0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "eth_rx",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_errors_tx_total{interface=\"eth0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "eth_tx",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_errors_rx_total{interface=\"lo\"}[5m]))",
+          "interval": "",
+          "legendFormat": "lo_rx",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_errors_tx_total{interface=\"lo\"}[5m]))",
+          "interval": "",
+          "legendFormat": "lo_tx",
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_errors_rx_total{interface=\"docker0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "docker0-rx",
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_errors_tx_total{interface=\"docker0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "docker0-tx",
+          "refId": "F"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Interface errors",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 12,
+        "y": 9
+      },
+      "hiddenSeries": false,
+      "id": 12,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "10.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_octets_rx_total{interface=\"eth0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "eth_rx",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_octets_tx_total{interface=\"eth0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "eth_tx",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_octets_rx_total{interface=\"lo\"}[5m]))",
+          "interval": "",
+          "legendFormat": "lo_rx",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_octets_tx_total{interface=\"lo\"}[5m]))",
+          "interval": "",
+          "legendFormat": "lo_tx",
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_octets_rx_total{interface=\"docker0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "docker0-rx",
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_octets_tx_total{interface=\"docker0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "docker0-tx",
+          "refId": "F"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Interface octets",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 18,
+        "y": 9
+      },
+      "hiddenSeries": false,
+      "id": 14,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "10.1.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_packets_rx_total{interface=\"eth0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "eth_rx",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_packets_tx_total{interface=\"eth0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "eth_tx",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_packets_rx_total{interface=\"lo\"}[5m]))",
+          "interval": "",
+          "legendFormat": "lo_rx",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_packets_tx_total{interface=\"lo\"}[5m]))",
+          "interval": "",
+          "legendFormat": "lo_tx",
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_packets_rx_total{interface=\"docker0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "docker0-rx",
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "f917556b-0daa-4902-9c5b-d3306d48aa0b"
+          },
+          "expr": "sum (rate(collectd_interface_if_packets_tx_total{interface=\"docker0\"}[5m]))",
+          "interval": "",
+          "legendFormat": "docker0-tx",
+          "refId": "F"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Interface packets",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Monitoring System - CollectD",
+  "uid": "lztOm1sGk",
+  "version": 1,
+  "weekStart": ""
+}
