@@ -21,6 +21,8 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - k8s-worker-1
-          - k8s-worker-2
-          - k8s-worker-3
+          - dx-dev2-10
+          - dx-dev2-6
+          - dx-dev2-7
+          - dx-dev2-8
+          - dx-dev2-9
