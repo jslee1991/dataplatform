@@ -23,10 +23,12 @@ spec:
           value: 'Developer'
         - name: ACCEPT_EULA
           value: 'Y'
+        - name: MSSQL_COLLATION
+          value: 'Latin1_General_BIN2'
         - name: SA_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mssql
+              name: mssql-secret
               key: SA_PASSWORD
         volumeMounts:
         - name: mssqldb
@@ -39,7 +41,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mssql-deployment
+  name: mssql-service
 spec:
   selector:
     app: mssql
@@ -47,5 +49,4 @@ spec:
     - protocol: TCP
       port: 1433
       targetPort: 1433
-  type: LoadBalancer
 

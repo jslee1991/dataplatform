@@ -38,7 +38,7 @@ spec:
         - containerPort: 9000
         env:
         - name: SONAR_JDBC_URL
-          value: "jdbc:sqlserver://mssql-service;databaseName=sonarqube;encrypt=false"
+          value: "jdbc:sqlserver://mssql-service;database=tempdb;encrypt=false"
         - name: SONAR_JDBC_USERNAME
           value: "sa"
         - name: SONAR_JDBC_PASSWORD
