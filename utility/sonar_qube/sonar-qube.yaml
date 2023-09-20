@@ -17,7 +17,8 @@ spec:
       initContainers:
       - name: volume-mount-hack
         image: busybox
-        command: ["sh", "-c", "chmod -R 777 /opt/sonarqube"]
+        #command: ["sh", "-c", "chmod -R 777 /opt/sonarqube"]
+        command: ["sh", "-c", "chown -R 1000:1000 /opt/sonarqube"]
         volumeMounts:
         - name: sonarqube-data
           mountPath: /opt/sonarqube/data
