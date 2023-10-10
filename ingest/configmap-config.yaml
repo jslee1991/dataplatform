@@ -1,0 +1,14 @@
+---
+# Source: logstash/templates/configmap-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-logstash-config
+  labels:
+    app: "logstash-logstash"
+    chart: "logstash"
+    heritage: "Helm"
+    release: "logstash"
+data:
+  topic-contrabass.yml: |
+    http.host: "0.0.0.0"

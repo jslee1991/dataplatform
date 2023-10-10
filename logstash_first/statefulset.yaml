@@ -1,0 +1,102 @@
+---
+# Source: logstash/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: logstash
+  labels:
+    app: "release-name-logstash"
+    chart: "logstash"
+    heritage: "Helm"
+    release: "release-name"
+spec:
+  serviceName: release-name-logstash-headless
+  selector:
+    matchLabels:
+      app: "release-name-logstash"
+      release: "release-name"
+  replicas: 1
+  podManagementPolicy: Parallel
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      name: "release-name-logstash"
+      labels:
+        app: "release-name-logstash"
+        chart: "logstash"
+        heritage: "Helm"
+        release: "release-name"
+      annotations:
+        configchecksum: 96015f6028d537834802e867aa64827a0f7c37c4470969b98e314e813052f6a
+        pipelinechecksum: b322f1a9d8ad7960c9e2803a62ff313cdb7ec80d8d97dcba75a35b54c7df542
+    spec:
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - "release-name-logstash"
+            topologyKey: kubernetes.io/hostname
+      terminationGracePeriodSeconds: 120
+      volumes:
+        - name: logstashconfig
+          configMap:
+            name: release-name-logstash-config
+        - name: logstashpipeline
+          configMap:
+            name: release-name-logstash-pipeline
+      containers:
+      - name: "logstash"
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 1000
+        image: "opensearchproject/logstash-oss-with-opensearch-output-plugin:7.16.3"
+        imagePullPolicy: "IfNotPresent"
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 300
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 3
+          timeoutSeconds: 5
+        ports:
+        - name: http
+          containerPort: 9600
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1536Mi
+          requests:
+            cpu: 100m
+            memory: 1536Mi
+        env:
+          - name: LS_JAVA_OPTS
+            value: "-Xmx1g -Xms1g"
+        volumeMounts:
+          - name: logstashconfig
+            mountPath: /usr/share/logstash/config/topic-contrabass.yml
+            subPath: topic-contrabass.yml
+          - name: logstashpipeline
+            mountPath: /usr/share/logstash/pipeline/topic-contrabass.conf
+            subPath: topic-contrabass.conf
