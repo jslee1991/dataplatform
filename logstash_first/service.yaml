@@ -3,7 +3,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: "release-name-logstash"
+  name: "logstash"
   labels:
     app: "release-name-logstash"
     chart: "logstash"

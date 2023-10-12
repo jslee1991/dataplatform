@@ -48,10 +48,10 @@ spec:
       volumes:
         - name: logstashconfig
           configMap:
-            name: release-name-logstash-config
+            name: logstash-config
         - name: logstashpipeline
           configMap:
-            name: release-name-logstash-pipeline
+            name: logstash-pipeline
       containers:
       - name: "logstash"
         securityContext:

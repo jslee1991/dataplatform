@@ -50,10 +50,10 @@ spec:
       volumes:
         - name: logstashconfig
           configMap:
-            name: logstash-logstash-config
+            name: ingest-logstash-config
         - name: logstashpipeline
           configMap:
-            name: logstash-logstash-pipeline
+            name: ingest-logstash-pipeline
       containers:
       - name: "logstash"
         securityContext:

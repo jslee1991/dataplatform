@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: logstash-logstash-pipeline
+  name: ingest-logstash-pipeline
   labels:
     app: "logstash-logstash"
     chart: "logstash"

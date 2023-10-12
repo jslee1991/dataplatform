@@ -3,7 +3,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: "logstash-logstash"
+  name: "ingest-logstash"
   labels:
     app: "logstash-logstash"
     chart: "logstash"

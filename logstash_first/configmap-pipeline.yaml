@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: release-name-logstash-pipeline
+  name: logstash-pipeline
   labels:
     app: "release-name-logstash"
     chart: "logstash"
@@ -49,5 +49,5 @@ data:
     if [system][memory][used][pct] { ruby { code => "event.set('[system][memory][used][pct]', (event.get('[system][memory][used][pct]') * 100.0).round(2))" } }
     if [system][memory][actual][used][pct] { ruby { code => "event.set('[system][memory][actual][used][pct]', (event.get('[system][memory][actual][used][pct]') * 100.0).round(2))" } }
     if [system][memory][swap][used][pct] { ruby { code => "event.set('[system][memory][swap][used][pct]', (event.get('[system][memory][swap][used][pct]') * 100.0).round(2))" } } } }
-    output { stdout { codec => rubydebug } kafka { bootstrap_servers => "kafka-cluster-kafka-bootstrap.default.svc:9092" topic_id => ["tuba-topic"] codec => "json" }
+    output { stdout { codec => rubydebug } kafka { bootstrap_servers => "kafka-cluster-kafka-bootstrap.default.svc:9092" topic_id => ["delta-topic"] codec => "json" }
     }
