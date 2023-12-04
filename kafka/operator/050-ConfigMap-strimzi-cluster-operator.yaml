@@ -4,7 +4,6 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: strimzi-cluster-operator
-  namespace: default
   labels:
     app: strimzi
     chart: strimzi-kafka-operator-0.35.1

@@ -13,7 +13,6 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: strimzi-cluster-operator
-    namespace: default
 roleRef:
   kind: ClusterRole
   name: strimzi-cluster-operator-global

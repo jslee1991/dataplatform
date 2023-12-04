@@ -5,10 +5,10 @@ kind: StatefulSet
 metadata:
   name: opensearch-cluster-data
   labels:
-    helm.sh/chart: opensearch-2.4.1
+    helm.sh/chart: opensearch-2.6.0
     app.kubernetes.io/name: opensearch
     app.kubernetes.io/instance: opensearch
-    app.kubernetes.io/version: "2.2.0"
+    app.kubernetes.io/version: "2.6.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: opensearch-cluster-data
   annotations:
@@ -27,10 +27,10 @@ spec:
     metadata:
       name: "opensearch-cluster-data"
       labels:
-        helm.sh/chart: opensearch-2.4.1
+        helm.sh/chart: opensearch-2.6.0
         app.kubernetes.io/name: opensearch
         app.kubernetes.io/instance: opensearch
-        app.kubernetes.io/version: "2.2.0"
+        app.kubernetes.io/version: "2.6.0"
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: opensearch-cluster-data
       annotations:
@@ -71,7 +71,7 @@ spec:
           runAsNonRoot: true
           runAsUser: 1000
   
-        image: "opensearchproject/opensearch:2.2.0"
+        image: "opensearchproject/opensearch:2.6.0"
         imagePullPolicy: "IfNotPresent"
         readinessProbe:
           failureThreshold: 3

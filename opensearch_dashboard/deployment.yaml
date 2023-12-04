@@ -5,10 +5,10 @@ kind: Deployment
 metadata:
   name: opensearch-dashboard-opensearch-dashboards
   labels:
-    helm.sh/chart: opensearch-dashboards-2.4.1
+    helm.sh/chart: opensearch-dashboards-2.6.0
     app.kubernetes.io/name: opensearch-dashboards
     app.kubernetes.io/instance: opensearch-dashboard
-    app.kubernetes.io/version: "2.2.1"
+    app.kubernetes.io/version: "2.6.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -37,7 +37,7 @@ spec:
             - ALL
           runAsNonRoot: true
           runAsUser: 1000
-        image: "opensearchproject/opensearch-dashboards:2.2.1"
+        image: "opensearchproject/opensearch-dashboards:2.6.0"
         imagePullPolicy: "IfNotPresent"
         env:
         - name: OPENSEARCH_HOSTS
