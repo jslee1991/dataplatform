@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+
+namespace: common-datastore
+
+images:
+  - name: unsealer
+    newName: harbor.okestro-k8s.cld/maestro/unsealer
+    newTag: v0.0.1
+

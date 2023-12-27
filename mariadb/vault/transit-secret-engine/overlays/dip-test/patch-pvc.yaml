@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: transit-secret-engine
+  namespace: common-datastore
+spec:
+  volumeClaimTemplates:
+    - metadata:
+        name: secret-engine-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: rook-ceph-block
+        volumeMode: Filesystem

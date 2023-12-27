@@ -1,0 +1,75 @@
+# StatefulSet to run the actual vault server cluster.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+ name: post-vault
+ namespace: common-datastore
+ labels:
+   app: post-vault
+spec:
+ serviceName: vault-internal
+ podManagementPolicy: Parallel
+ replicas: 1
+ updateStrategy:
+   type: OnDelete
+ selector:
+   matchLabels:
+     app: post-vault
+ template:
+   metadata:
+     labels:
+       app: post-vault
+     annotations:
+       proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
+   spec:
+     terminationGracePeriodSeconds: 10
+     serviceAccountName: vault
+     securityContext:
+       runAsNonRoot: true
+       runAsGroup: 1000
+       runAsUser: 100
+       fsGroup: 1000
+     volumes:
+       - name: config
+         configMap:
+           name: vault-config
+       - name: vault-token
+         configMap:
+           name: vault-token
+       - name: home
+         emptyDir: {}
+      #  - name: data
+      #    persistentVolumeClaim:
+      #      claimName: pvc
+     initContainers:
+       - name: init
+         image: init
+         command: [ 'sh', '-c', 'until nslookup vault.common-datastore.svc.cluster.local; do echo waiting for secret-engine to
+     be ready; sleep 2;done' ]
+     containers:
+       - name: initialize
+         image: initialize
+         imagePullPolicy: IfNotPresent
+         securityContext:
+           allowPrivilegeEscalation: true
+           runAsNonRoot: false
+           runAsUser: 0
+         volumeMounts:
+           - name: config
+             mountPath: /vault/config
+           - name: data
+             mountPath: /vault/data 
+         command:
+           - "sh"
+           - "/vault/config/init.sh"
+#  volumeClaimTemplates:
+#    - metadata:
+#        name: data
+#      spec:
+#        accessModes:
+#          - ReadWriteOnce
+#        resources:
+#          requests:
+#            storage: 64Mi
+#        storageClassName: rook-ceph-block
+#        volumeMode: Filesystem

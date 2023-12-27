@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unsealer
+  namespace: common-datastore
+spec:
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: unsealer
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
+      labels:
+        app: unsealer
+    spec:
+      serviceAccountName: vault
+      containers:
+        - name: unsealer
+          image: unsealer
+          command: ['sh', '-c']
+          args:
+              - '/bin/server'
+          env:
+            - name: APISERVER
+              value: "https://kubernetes.default.svc"
+            - name: SERVICEACCOUNT
+              value: "/var/run/secrets/kubernetes.io/serviceaccount"
+            - name: TRANSITPOD
+              value: "vault-0"
+            - name: TRANSITNAMESPACE
+              value: "common-datastore"
+            - name: UNSEALTOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: unsealer-secret
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+          ports:
+            - containerPort: 3339
+              name: http-unsealer
+      restartPolicy: Always

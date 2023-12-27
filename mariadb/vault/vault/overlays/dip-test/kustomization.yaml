@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+
+namespace: common-datastore
+images:
+  - name: vault
+    newName: harbor.okestro-k8s.cld/maestro/maestro/vault
+    newTag: "1.14.1"
+  - name: initialize
+    newName: harbor.okestro-k8s.cld/maestro/maestro/kubectl
+    newTag: v1
+  - name: init
+    newName: harbor.okestro-k8s.cld/maestro/maestro/busybox
+    newTag: "1.28"
+
+patchesStrategicMerge:
+  - patch-pvc.yaml
+  
+# patchesStrategicMerge:
+#   - patches/taint-patch.yaml
+#patches:
+#  - target:
+#      kind: StatefulSet
+#    path: patches/nodeselector-patch.yaml

@@ -26,9 +26,13 @@ spec:
       annotations:
     spec:
       securityContext:
-        {}
+        fsGroup: 1000
+        runAsUser: 1000
       serviceAccountName: opensearch-dashboard-opensearch-dashboards-dashboards
       volumes:
+      - name: config
+        configMap:
+          name: opensearch-dashboard-config
       containers:
       - name: dashboards
         securityContext:
@@ -37,7 +41,7 @@ spec:
             - ALL
           runAsNonRoot: true
           runAsUser: 1000
-        image: "opensearchproject/opensearch-dashboards:2.6.0"
+        image: jaeseung2/opensearch-dashboard:latest
         imagePullPolicy: "IfNotPresent"
         env:
         - name: OPENSEARCH_HOSTS
@@ -56,3 +60,6 @@ spec:
             cpu: 100m
             memory: 512M
         volumeMounts:
+        - name: config
+          mountPath: /usr/share/opensearch-dashboards/config/opensearch_dashboards.yml
+          subPath: opensearch_dashboards.yml 

@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+
+namespace: common-datastore
+images:
+  - name: vault
+    newName: harbor.okestro-k8s.cld/maestro/maestro/vault
+    newTag: "1.14.1"
+  - name: extract
+    newName: harbor.okestro-k8s.cld/maestro/maestro/kubectl
+    newTag: v1
+
+patchesStrategicMerge:
+  - patch-pvc.yaml
+  
+# patches:
+#   - target:
+#       kind: Application
+#     patch: |-
+#       - op: remove
+#         path: /spec/destination/server
+#         value: https://kubernetes.docker.internal:6443
+#       - op: replace
+#         path: /spec/destination/name
+#         value: docker-desktop
+#       - op: replace
+#         path: /spec/project
+#         value: maestro-admin 

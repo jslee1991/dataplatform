@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: maestro-mariadb
+  labels:
+    app: maestro
+    tier: db
+spec:
+  serviceName: maestro-mariadb
+  selector:
+    matchLabels:
+      app: maestro
+      tier: db
+  template:
+    metadata:
+      labels:
+        app: maestro
+        tier: db
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb
+          ports:
+            - name: tcp-maestro-db
+              containerPort: 3307
+              protocol: TCP
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql/$(POD_NAME)
+              subPath: mysql
+            - name: maestro-mariadb-init-sql-config
+              mountPath: /docker-entrypoint-initdb.d/init.sql
+              subPath: init.sql
+            - name: maestro-config-map
+              subPath: my.cnf
+              mountPath: /etc/mysql/my.cnf
+#            - name: maestro-mariadb-ddl-sql-config
+#              mountPath: /docker-entrypoint-initdb.d/maestro-ddl.sql
+#              subPath: maestro-ddl.sql
+#            - name: maestro-mariadb-dml-sql-config
+#              mountPath: /docker-entrypoint-initdb.d/maestro-dml.sql
+#              subPath: maestro-dml.sql
+#            - name: maestro-mariadb-viola-sql-config
+#              mountPath: /docker-entrypoint-initdb.d/maestro-viola.sql
+#              subPath: maestro-viola.sql
+#            - name: mariadb-trombone-sql-config
+#              subPath: trombone.sql
+#              mountPath: /docker-entrypoint-initdb.d
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: mariadb-root-password
+                  name: mariadb-secret
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "512Mi"
+            limits:
+              memory: "1024Mi"
+      volumes:
+        - name: maestro-mariadb-init-sql-config
+          configMap:
+            name: maestro-mariadb-init-sql-config
+            items:
+              - key: init.sql
+                path: init.sql
+        - name: maestro-config-map
+          configMap:
+            name: maestro-mariadb-config
+            defaultMode: 0775
+#        - name: maestro-mariadb-ddl-sql-config
+#          configMap:
+#            name: maestro-mariadb-ddl-sql-config
+#            items:
+#              - key: maestro-ddl.sql
+#                path: maestro-ddl.sql
+#        - name: maestro-mariadb-dml-sql-config
+#          configMap:
+#            name: maestro-mariadb-dml-sql-config
+#            items:
+#              - key: maestro-dml.sql
+#                path: maestro-dml.sql
+#        - name: maestro-mariadb-viola-sql-config
+#          configMap:
+#            name: maestro-mariadb-viola-sql-config
+#            items:
+#              - key: maestro-viola.sql
+#                path: maestro-viola.sql
+#        - name: mariadb-trombone-sql-config
+#          configMap:
+#            name: mariadb-trombone-sql-config
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+      storageClassName: ""
+      volumeMode: Filesystem

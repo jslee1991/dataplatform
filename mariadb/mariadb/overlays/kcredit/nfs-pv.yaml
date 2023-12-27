@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-client
+spec:
+  capacity: #용량
+    storage: 30Gi # PersistentVolume(PV) 사이즈를 지정한다.
+  accessModes:
+    - ReadWriteMany #여러 클라이언트를 위한 읽기 쓰기 마운트
+  nfs:
+    server: 192.168.2.223 # nfs서버의 ip주소
+    path: /share #nfs서버에서 공유한 디렉토리명
+  storageClassName: ""

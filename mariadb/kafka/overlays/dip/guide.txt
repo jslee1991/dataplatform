@@ -1,0 +1,5 @@
+1. kafka cluster operator 설치
+    a. kustomization.yaml : newName, newTag, REGISTRY 값 변경
+    b. kubectl apply -k .
+2. cluster operator 설치가 되면 kafka.yaml 설치 (설치 전에 storage class 변경)
+3. zookeeper, kafka RUNNING 확인하기!

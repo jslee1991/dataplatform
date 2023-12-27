@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: common-datastore-test
+resources:
+  - redis-acl.yaml
+  - redis-config.yaml
+  - redis-pvc.yaml
+  - ../../base
+images:
+  - name: redis
+#    newName: redis
+    newName: harbor.okestro-k8s.cld/maestro/maestro/redis
+    newTag: "latest"

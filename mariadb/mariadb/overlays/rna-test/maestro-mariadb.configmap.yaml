@@ -1,0 +1,911 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: maestro-mariadb-config
+  namespace: common-datastore
+data:
+  init.sql: |
+    USE mysql;
+    CREATE user 'maestro'@'%' identified by 'okestro2018';
+    CREATE DATABASE IF NOT EXISTS maestro;
+    CREATE DATABASE IF NOT EXISTS cloud_service;
+    grant ALL PRIVILEGES on *.* to 'maestro'@'%';
+    flush privileges;
+  my.cnf: |
+    # The MariaDB configuration file
+    #
+    # The MariaDB/MySQL tools read configuration files in the following order:
+    # 0. "/etc/mysql/my.cnf" symlinks to this file, reason why all the rest is read.
+    # 1. "/etc/mysql/mariadb.cnf" (this file) to set global defaults,
+    # 2. "/etc/mysql/conf.d/*.cnf" to set global options.
+    # 3. "/etc/mysql/mariadb.conf.d/*.cnf" to set MariaDB-only options.
+    # 4. "~/.my.cnf" to set user-specific options.
+    #
+    # If the same option is defined multiple times, the last one will apply.
+    #
+    # One can use all long options that the program supports.
+    # Run program with --help to get a list of available options and with
+    # --print-defaults to see which it would actually understand and use.
+    #
+    # If you are new to MariaDB, check out https://mariadb.com/kb/en/basic-mariadb-articles/
+    
+    #
+    # This group is read both by the client and the server
+    # use it for options that affect everything
+    #
+      [client-server]
+    # Port or socket location where to connect
+      port = 3307
+      socket = /run/mysqld/mysqld.sock
+    
+    # Import all .cnf files from configuration directory
+    
+      !includedir /etc/mysql/mariadb.conf.d/
+      !includedir /etc/mysql/conf.d/
+    
+      [mysqld]
+      skip-host-cache
+      skip-name-resolve
+    
+      [mariadb]
+      log_error=/var/log/mysqld.log
+  j_maestro_ddl.sql: |+
+    use maestro;
+    create or replace table API_WHITE_LIST
+    (
+    id     varchar(36)  default uuid() null,
+    path   varchar(255)                null,
+    method varchar(255) default 'GET'  null
+    );
+
+
+    create or replace table MSTR_ASSIGNER_IN_WORKFLOW
+    (
+    id             varchar(36) default uuid()              not null,
+    assign_user_id varchar(36)                             null,
+    workflow_id    varchar(36)                             not null,
+    assign_type    int         default 1                   null,
+    create_time    timestamp   default current_timestamp() null
+    );
+
+
+    create or replace table MSTR_AUTHORITY
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    name           varchar(127)               not null,
+    description    text                       null,
+    selector       text                       null,
+    service        varchar(127)               null,
+    type           varchar(127)               null,
+    create_user_id varchar(36)                null,
+    update_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_time    timestamp                  null,
+    status         int         default 0      null,
+    solution       varchar(127)               null,
+    constant       tinyint     default 0      null
+    );
+
+
+    create or replace index MSTR_AUTHORITY_create_time_index
+    on MSTR_AUTHORITY (create_time);
+
+
+    create or replace table MSTR_CATEGORY
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    name           varchar(127)               null,
+    description    varchar(255)               null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    status         int         default 0      null
+    );
+
+
+    create or replace table MSTR_ENDPOINT
+    (
+    id             varchar(36) default uuid() not null,
+    name           varchar(127)               null,
+    description    varchar(255)               null,
+    uri            varchar(255)               null,
+    solution_id    varchar(36)                not null,
+    solution       varchar(127)               null,
+    service        varchar(127)               null,
+    type           varchar(127)               null,
+    method         varchar(127)               null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    status         int         default 0      null,
+    constraint MSTR_ENDPOINT_pk
+        unique (uri, method)
+    );
+
+
+    create or replace index MSTR_ENDPOINT_create_time_index
+    on MSTR_ENDPOINT (create_time);
+
+
+    create or replace table MSTR_ENDPOINT_IN_AUTHORITY
+    (
+    id           varchar(36) default uuid() not null,
+    authority_id varchar(36) default uuid() not null,
+    endpoint_id  varchar(36) default uuid() not null
+    );
+
+
+    create or replace table MSTR_ENDPOINT_RESOURCE_TYPE
+    (
+    name        varchar(127) not null
+        primary key,
+    description varchar(255) null,
+    selector    varchar(255) null
+    );
+
+
+    create or replace table MSTR_ENDPOINT_SERVICE
+    (
+    name        varchar(127) not null
+        primary key,
+    description varchar(255) null,
+    selector    varchar(255) null
+    );
+
+
+    create or replace table MSTR_ENDPOINT_TYPE_IN_SERVICE
+    (
+    service varchar(127) not null,
+    type    varchar(127) not null,
+    primary key (service, type)
+    );
+
+
+    create or replace index FK_MSTR_ENDPOINT_RESOURC
+    on MSTR_ENDPOINT_TYPE_IN_SERVICE (type);
+
+
+    create or replace table MSTR_FIELD_IN_SECTION
+    (
+    id               varchar(36) default uuid() not null,
+    name             varchar(127)               null,
+    description      varchar(255)               null,
+    create_user_id   varchar(36)                null,
+    create_time      timestamp                  null,
+    update_user_id   varchar(36)                null,
+    update_time      timestamp                  null,
+    status           int         default 0      null,
+    section_id       varchar(36) default uuid() not null,
+    `order`          int                        null,
+    type_of_field_id varchar(36) default uuid() not null
+    );
+
+
+    create or replace table MSTR_FOLDER
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    name           varchar(127)               not null,
+    description    text                       null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    parent_id      varchar(36)                null,
+    org_id         varchar(36)                null,
+    depth          int                        not null,
+    status         int         default 0      not null
+    );
+
+
+    create or replace index MSTR_FOLDER_create_time_index
+    on MSTR_FOLDER (create_time);
+
+
+    create or replace table MSTR_FOLDER_IN_SERVICE_CATALOG
+    (
+    id                 varchar(36) default uuid()              not null,
+    folder_id          varchar(36)                             not null,
+    service_catalog_id varchar(36)                             not null,
+    create_time        timestamp   default current_timestamp() null
+    );
+
+
+    create or replace table MSTR_INFRA_FOLDER
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    name           varchar(127)               not null,
+    description    text                       null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    depth          int                        not null,
+    parent_id      varchar(36)                null,
+    root_infra_id  varchar(36)                null,
+    status         int         default 0      null,
+    constraint MSTR_INFRA_FOLDER_pk
+        unique (parent_id, name),
+    constraint MSTR_INFRA_FOLDER_MSTR_INFRA_FOLDER_id_fk
+        foreign key (root_infra_id) references MSTR_INFRA_FOLDER (id),
+    constraint MSTR_INFRA_FOLDER_parent_id_fk
+        foreign key (parent_id) references MSTR_INFRA_FOLDER (id)
+    );
+
+
+    create or replace index MSTR_INFRA_FOLDER_create_time_index
+    on MSTR_INFRA_FOLDER (create_time);
+
+
+    create or replace table MSTR_PLATFORM
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    solution_id    varchar(36)                null,
+    name           varchar(127)               null,
+    description    varchar(255)               null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    status         int         default 0      null
+    );
+
+
+    create or replace table MSTR_PROVIDER_TYPE
+    (
+    id          int           not null
+        primary key,
+    name        varchar(127)  null,
+    public      int default 1 null,
+    description varchar(127)  null,
+    is_active   int default 1 not null
+    );
+
+
+    create or replace table MSTR_PROVIDER
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    name           varchar(127)               not null,
+    description    text                       null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    parent_id      varchar(36)                null,
+    root_infra_id  varchar(36)                null,
+    status         int         default 0      null,
+    type           int         default 1      null,
+    platform_type  int         default 0      null,
+    url            varchar(127)               null,
+    place          varchar(255)               null,
+    constraint MSTR_PROVIDER_MSTR_PROVIDER_TYPE_null_fk
+        foreign key (type) references MSTR_PROVIDER_TYPE (id)
+    );
+
+
+    create or replace index MSTR_PROVIDER_create_time_index
+    on MSTR_PROVIDER (create_time);
+
+
+    create or replace table MSTR_REQUEST_OF_SERVICE
+    (
+    id                             varchar(36) default uuid() not null,
+    name                           varchar(127)               null,
+    description                    varchar(255)               null,
+    create_user_id                 varchar(36)                null,
+    create_time                    timestamp                  null,
+    update_user_id                 varchar(36)                null,
+    update_time                    timestamp                  null,
+    status                         int         default 0      null,
+    assign_user_id                 varchar(36)                null,
+    expect_complete_time           timestamp                  null,
+    content                        text                       null,
+    template_request_of_service_id varchar(36)                not null
+    );
+
+
+    create or replace table MSTR_REQUEST_OF_SERVICE_OBJECT
+    (
+    id                  varchar(36) default uuid() not null,
+    name                varchar(127)               null,
+    description         text                       null,
+    create_user_id      varchar(36)                not null,
+    create_time         timestamp                  null,
+    update_user_id      varchar(36)                null,
+    update_time         timestamp                  null on update current_timestamp(),
+    status              int         default 0      null,
+    service_object_id   varchar(36) default uuid() null comment '추후 분리해야함',
+    request_user_id     varchar(36) default uuid() null,
+    manager_id          varchar(36)                null,
+    provider_id         varchar(36) default uuid() null,
+    tenant_id           varchar(36) default uuid() null,
+    request_time        timestamp                  null,
+    desired_end_time    timestamp                  null,
+    content             varchar(1000)              null,
+    type                int         default 0      null,
+    file_path           varchar(255)               null,
+    variables           text                       null,
+    approve_time        timestamp                  null,
+    progress_time       timestamp                  null,
+    end_time            timestamp                  null,
+    detail              text                       null,
+    provision_file_path varchar(255)               null,
+    provision_log       text                       null,
+    yaml                text                       null
+    );
+
+
+    create or replace table MSTR_RESOURCE_TYPE
+    (
+    id   varchar(36) default uuid() not null,
+    name varchar(31)                not null
+    );
+
+
+    create or replace table MSTR_ROLE_DEPLOY
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    name           varchar(127)               null,
+    description    varchar(255)               null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    status         int         default 1      null,
+    org_id         varchar(36)                null,
+    constraint FK_MSTR_FOLDER_TO_MSTR_ROLE_DEPLOY_1
+        foreign key (org_id) references MSTR_FOLDER (id)
+    );
+
+
+    create or replace table MSTR_FOLDER_IN_ROLE_DEPLOY
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    org_id         varchar(36)                not null,
+    deploy_id      varchar(36)                not null,
+    constraint FK_MSTR_FOLDER_TO_MSTR_FOLDER_IN_ROLE_DEPLOY_1
+        foreign key (org_id) references MSTR_FOLDER (id),
+    constraint FK_MSTR_ROLE_DEPLOY_TO_MSTR_FOLDER_IN_ROLE_DEPLOY_1
+        foreign key (deploy_id) references MSTR_ROLE_DEPLOY (id)
+    );
+
+
+    create or replace table MSTR_ROLE_TYPE
+    (
+    id          varchar(36) default uuid() not null
+        primary key,
+    description varchar(255)               null,
+    name        varchar(255)               not null,
+    selector    varchar(255)               null
+    );
+
+
+    create or replace table MSTR_ROLE_CATEGORY
+    (
+    id          varchar(36) default uuid() not null
+        primary key,
+    description varchar(255)               null,
+    name        varchar(255)               not null,
+    type_id     varchar(36)                not null,
+    selector    varchar(255)               not null,
+    constraint FK_MSTR_ROLE_TYPE_TO_MSTR_ROLE_CATEGORY_1
+        foreign key (type_id) references MSTR_ROLE_TYPE (id)
+    );
+
+
+    create or replace table MSTR_ROLE
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    name           varchar(127)               null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    description    varchar(255)               null,
+    selector       varchar(255)               not null,
+    status         int         default 1      not null,
+    category_id    varchar(36)                not null,
+    open_org       int         default 0      null,
+    open_folder    int         default 0      null,
+    open_workspace int         default 0      null,
+    role_type_id   varchar(36)                null,
+    constraint FK_MSTR_ROLE_CATEGORY_TO_MSTR_ROLE_1
+        foreign key (category_id) references MSTR_ROLE_CATEGORY (id),
+    constraint MSTR_ROLE_MSTR_ROLE_TYPE_id_fk
+        foreign key (role_type_id) references MSTR_ROLE_TYPE (id)
+    );
+
+
+    create or replace table MSTR_AUTHORITY_IN_ROLE
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    role_id        varchar(36)                not null,
+    authority_id   varchar(36)                not null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    status         int         default 0      null,
+    constraint MSTR_AUTHORITY_IN_ROLE_MSTR_AUTHORITY_null_fk
+        foreign key (authority_id) references MSTR_AUTHORITY (id),
+    constraint MSTR_AUTHORITY_IN_ROLE_MSTR_ROLE_null_fk
+        foreign key (role_id) references MSTR_ROLE (id)
+    );
+
+
+    create or replace table MSTR_ROLE_DEPLOYED
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    deploy_id      varchar(36)                not null,
+    role_id        varchar(36)                not null,
+    constraint MSTR_ROLE_DEPLOYED_pk
+        unique (deploy_id, role_id),
+    constraint FK_MSTR_ROLE_DEPLOY_TO_MSTR_DEPLOYED_ROLE_1
+        foreign key (deploy_id) references MSTR_ROLE_DEPLOY (id),
+    constraint FK_MSTR_ROLE_TO_MSTR_DEPLOYED_ROLE_1
+        foreign key (role_id) references MSTR_ROLE (id)
+    );
+
+
+    create or replace table MSTR_SECTION_IN_TEMPLATE_REQUEST_OF_SERVICE
+    (
+    id                             varchar(36) default uuid() not null,
+    name                           varchar(127)               null,
+    description                    varchar(255)               null,
+    create_user_id                 varchar(36)                null,
+    create_time                    timestamp                  null,
+    update_user_id                 varchar(36)                null,
+    update_time                    timestamp                  null,
+    status                         int         default 0      null,
+    template_request_of_service_id varchar(36)                not null
+    );
+
+
+    create or replace table MSTR_SELECT_FIELD
+    (
+    id             varchar(36) default uuid() not null,
+    name           varchar(127)               null,
+    description    varchar(255)               null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    status         int         default 0      null
+    );
+
+
+    create or replace table MSTR_SERVICE_CATALOG
+    (
+    id             varchar(36) default uuid() not null,
+    name           varchar(127)               null,
+    description    varchar(255)               null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    status         int         default 0      null
+    );
+
+
+    create or replace table MSTR_SERVICE_OBJECT
+    (
+    id                              varchar(36)  default uuid()                             not null
+        primary key,
+    name                            varchar(127)                                            null,
+    description                     varchar(255)                                            null,
+    create_user_id                  varchar(36)                                             null,
+    create_time                     timestamp                                               null,
+    update_user_id                  varchar(36)                                             null,
+    update_time                     timestamp                                               null,
+    status                          int          default 0                                  null,
+    file_path                       varchar(255)                                            null,
+    image_path                      varchar(255) default 'https://placeimg.com/100/100/any' not null,
+    platform_id                     varchar(36)  default uuid()                             not null,
+    type_of_service_object_build_id varchar(36)                                             null,
+    type_of_service_object_id       varchar(36)                                             null,
+    category_id                     varchar(36)                                             not null,
+    yaml                            text                                                    null,
+    use_count                       int          default 0                                  null,
+    type                            varchar(127)                                            null
+    );
+
+
+    create or replace table MSTR_SERVICE_OBJECT_IN_SERVICE_CATALOG
+    (
+    id                 varchar(36) default uuid()              not null,
+    service_catalog_id varchar(36)                             not null,
+    service_object_id  varchar(36)                             not null,
+    create_time        timestamp   default current_timestamp() null,
+    constraint SERVICE_CATALOG_ID_SERVICE_OBJECT_ID
+        unique (service_catalog_id, service_object_id)
+    );
+
+
+    create or replace table MSTR_SERVICE_REQUEST
+    (
+    id               varchar(36) default uuid() not null,
+    name             varchar(127)               null,
+    status           int         default 0      null,
+    create_time      timestamp                  null,
+    end_time         timestamp                  null,
+    requester_id     varchar(36)                not null,
+    manager_id       varchar(36)                null,
+    description      text                       null,
+    cidr             varchar(127)               null,
+    solution_id      varchar(36)                not null,
+    resource_type_id varchar(36)                not null
+    );
+
+
+    create or replace table MSTR_SOLUTION
+    (
+    id              varchar(36) default uuid() not null
+        primary key,
+    name            varchar(127)               not null,
+    create_user_id  varchar(36)                null,
+    create_time     datetime                   null,
+    update_user_id  varchar(36)                null,
+    update_time     datetime                   null,
+    description     varchar(255)               null,
+    status          int                        null,
+    base_user_path  varchar(255)               null,
+    base_admin_path varchar(255)               null
+    );
+
+
+    create or replace table MSTR_ENDPOINT_SERVICE_IN_SOLUTION
+    (
+    service     varchar(127) not null,
+    solution_id varchar(36)  not null,
+    primary key (service, solution_id),
+    constraint FK_MSTR_ENDPOINT_SERVICE_TO_MSTR_ENDPOINT_SERVICE_IN_SOLUTION_1
+        foreign key (service) references MSTR_ENDPOINT_SERVICE (name),
+    constraint MSTR_ENDPOINT_SERVICE_IN_SOLUTION_MSTR_SOLUTION_null_fk
+        foreign key (solution_id) references MSTR_SOLUTION (id)
+    );
+
+
+    create or replace table MSTR_SOLUTION_IN_WORKSPACE
+    (
+    id           varchar(36) default uuid() not null,
+    name         varchar(127)               not null,
+    workspace_id varchar(36)                not null,
+    solution_id  varchar(36)                not null
+    );
+
+
+    create or replace table MSTR_TAG
+    (
+    id             varchar(36) default uuid() not null,
+    name           varchar(127)               null,
+    description    varchar(255)               null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    status         int         default 0      null
+    );
+
+
+    create or replace table MSTR_TAG_IN_SERVICE_OBJECT
+    (
+    id                varchar(36) default uuid()              not null
+        primary key,
+    service_object_id varchar(36)                             not null,
+    tag_id            varchar(36)                             not null,
+    create_time       timestamp   default current_timestamp() null
+    );
+
+
+    create or replace table MSTR_TEMPLATE_REQUEST_OF_SERVICE
+    (
+    id             varchar(36) default uuid() not null,
+    name           varchar(127)               null,
+    description    varchar(255)               null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    status         int         default 0      null
+    );
+
+
+    create or replace table MSTR_TEXT_FIELD
+    (
+    id             varchar(36) default uuid() not null,
+    name           varchar(127)               null,
+    description    varchar(255)               null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    status         int         default 0      null
+    );
+
+
+    create or replace table MSTR_TYPE_OF_FIELD
+    (
+    id             varchar(36) default uuid() not null,
+    name           varchar(127)               null,
+    description    varchar(255)               null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    status         int         default 0      null,
+    `order`        int                        null
+    );
+
+
+    create or replace table MSTR_TYPE_OF_SERVICE_OBJECT
+    (
+    id             varchar(36) default uuid() not null,
+    name           varchar(127)               null,
+    description    varchar(255)               null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    status         int         default 0      null
+    );
+
+
+    create or replace table MSTR_TYPE_OF_SERVICE_OBJECT_BUILD
+    (
+    id             varchar(36) default uuid() not null,
+    name           varchar(127)               null,
+    description    varchar(255)               null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    status         int         default 0      null
+    );
+
+
+    create or replace table MSTR_USER_GROUP
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    name           varchar(127)               not null,
+    description    text                       null,
+    org_id         varchar(36)                not null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    status         int         default 1      null,
+    group_email    varchar(255)               not null
+    );
+
+
+    create or replace index MSTR_USER_GROUP_create_time_index
+    on MSTR_USER_GROUP (create_time);
+
+
+    create or replace table MSTR_USER_GROUP_FOLDER_ROLE
+    (
+    id               varchar(36) default uuid() not null
+        primary key,
+    create_user_id   varchar(36)                null,
+    create_time      timestamp                  null,
+    user_group_id    varchar(36)                not null,
+    deployed_role_id varchar(36)                not null,
+    folder_id        varchar(36)                not null,
+    constraint MSTR_USER_GROUP_FOLDER_ROLE_pk
+        unique (folder_id, user_group_id, deployed_role_id),
+    constraint FK_MSTR_DEPLOYED_ROLE_TO_MSTR_USER_GROUP_FOLDER_ROLE_1
+        foreign key (deployed_role_id) references MSTR_ROLE_DEPLOYED (id),
+    constraint FK_MSTR_FOLDER_TO_MSTR_USER_GROUP_FOLDER_ROLE_1
+        foreign key (folder_id) references MSTR_FOLDER (id),
+    constraint FK_MSTR_USER_GROUP_TO_MSTR_USER_GROUP_FOLDER_ROLE_1
+        foreign key (user_group_id) references MSTR_USER_GROUP (id)
+    );
+
+
+    create or replace table MSTR_USER_IN_FOLDER
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    user_id        varchar(36)                not null,
+    folder_id      varchar(36)                not null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    name           varchar(127)               null,
+    description    text                       null,
+    status         tinyint     default 0      null,
+    is_guest       tinyint(1)                 null,
+    is_org         tinyint(1)                 null,
+    constraint MSTR_USER_IN_FOLDER_MSTR_FOLDER_null_fk
+        foreign key (folder_id) references MSTR_FOLDER (id)
+    );
+
+
+    create or replace table MSTR_USER_FOLDER_ROLE
+    (
+    id                varchar(36) default uuid() not null
+        primary key,
+    create_user_id    varchar(36)                null,
+    create_time       timestamp                  null,
+    folder_id         varchar(36)                not null,
+    user_in_folder_id varchar(36)                not null,
+    deployed_role_id  varchar(36)                not null,
+    constraint MSTR_USER_FOLDER_ROLE_pk
+        unique (folder_id, user_in_folder_id, deployed_role_id),
+    constraint FK_MSTR_DEPLOYED_ROLE_TO_MSTR_USER_FOLDER_ROLE_1
+        foreign key (deployed_role_id) references MSTR_ROLE_DEPLOYED (id),
+    constraint FK_MSTR_FOLDER_TO_MSTR_USER_FOLDER_ROLE_1
+        foreign key (folder_id) references MSTR_FOLDER (id),
+    constraint FK_MSTR_USER_IN_FOLDER_TO_MSTR_USER_FOLDER_ROLE_1
+        foreign key (user_in_folder_id) references MSTR_USER_IN_FOLDER (id)
+    );
+
+
+    create or replace index MSTR_USER_IN_FOLDER_create_time_index
+    on MSTR_USER_IN_FOLDER (create_time);
+
+
+    create or replace table MSTR_USER_IN_GROUP
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    status         int         default 0      null,
+    user_id        varchar(36)                not null,
+    user_group_id  varchar(36) default uuid() not null,
+    constraint FK_MSTR_USER_GROUP_TO_MSTR_USER_IN_GROUP_1
+        foreign key (user_group_id) references MSTR_USER_GROUP (id)
+    );
+
+
+    create or replace table MSTR_WORKFLOW
+    (
+    id               varchar(36) default uuid()              not null,
+    name             varchar(127)                            null,
+    description      varchar(255)                            null,
+    create_user_id   varchar(36)                             null,
+    create_time      timestamp   default current_timestamp() null,
+    update_user_id   varchar(36)                             null,
+    update_time      timestamp   default current_timestamp() null on update current_timestamp(),
+    status           int         default 0                   null,
+    next_workflow_id varchar(36)                             null,
+    step             int                                     null
+    );
+
+
+    create or replace table MSTR_WORKFLOW_IN_REQUEST_OF_SERVICE_OBJECT
+    (
+    id                           varchar(36) default uuid()              not null,
+    request_of_service_object_id varchar(36)                             not null,
+    workflow_id                  varchar(36)                             not null,
+    create_time                  timestamp   default current_timestamp() null
+    );
+
+
+    create or replace table MSTR_WORKSPACE
+    (
+    id             varchar(36) default uuid() not null
+        primary key,
+    name           varchar(127)               not null,
+    description    text                       null,
+    folder_id      varchar(36)                not null,
+    create_user_id varchar(36)                null,
+    create_time    timestamp                  null,
+    update_user_id varchar(36)                null,
+    update_time    timestamp                  null,
+    status         int         default 0      null,
+    org_id         varchar(36)                null,
+    constraint MSTR_WORKSPACE__org_id__name
+        unique (org_id, name)
+    );
+
+
+    create or replace table MSTR_USER_GROUP_WORKSPACE_ROLE
+    (
+    id               varchar(36) default uuid() not null
+        primary key,
+    create_user_id   varchar(36)                null,
+    create_time      timestamp                  null,
+    user_group_id    varchar(36)                not null,
+    deployed_role_id varchar(36)                not null,
+    workspace_id     varchar(36)                not null,
+    constraint MSTR_USER_GROUP_WORKSPACE_ROLE_pk
+        unique (workspace_id, user_group_id, deployed_role_id),
+    constraint FK_MSTR_DEPLOYED_ROLE_TO_CopyOfMSTR_USER_GROUP_FOLDER_ROLE_1
+        foreign key (deployed_role_id) references MSTR_ROLE_DEPLOYED (id),
+    constraint FK_MSTR_USER_GROUP_TO_CopyOfMSTR_USER_GROUP_FOLDER_ROLE_1
+        foreign key (user_group_id) references MSTR_USER_GROUP (id),
+    constraint FK_MSTR_WORKSPACE_TO_CopyOfMSTR_USER_GROUP_FOLDER_ROLE_1
+        foreign key (workspace_id) references MSTR_WORKSPACE (id)
+    );
+
+
+    create or replace table MSTR_USER_WORKSPACE_ROLE
+    (
+    id                varchar(36) default uuid() not null
+        primary key,
+    create_user_id    varchar(36)                null,
+    create_time       timestamp                  null,
+    workspace_id      varchar(36)                not null,
+    user_in_folder_id varchar(36)                not null,
+    deployed_role_id  varchar(36)                not null,
+    constraint MSTR_USER_WORKSPACE_ROLE_pk
+        unique (deployed_role_id, user_in_folder_id, workspace_id),
+    constraint FK_MSTR_DEPLOYED_ROLE_TO_MSTR_USER_WORKSPACE_ROLE_1
+        foreign key (deployed_role_id) references MSTR_ROLE_DEPLOYED (id),
+    constraint FK_MSTR_USER_IN_FOLDER_TO_MSTR_USER_WORKSPACE_ROLE_1
+        foreign key (user_in_folder_id) references MSTR_USER_IN_FOLDER (id),
+    constraint FK_MSTR_WORKSPACE_TO_MSTR_USER_WORKSPACE_ROLE_1
+        foreign key (workspace_id) references MSTR_WORKSPACE (id)
+    );
+
+
+    create or replace index MSTR_WORKSPACE_create_time_index
+    on MSTR_WORKSPACE (create_time);
+
+
+    create or replace table MSTR_WORKSPACE_CONNECTION
+    (
+    id           varchar(36)  default uuid()              not null
+        primary key,
+    workspace_id varchar(36)                              not null,
+    provider_id  varchar(36)                              not null,
+    tenant_name  varchar(127) default 'Default'           not null,
+    tenant_id    varchar(36)                              null,
+    create_time  timestamp    default current_timestamp() null,
+    constraint workspace_id
+        unique (workspace_id, provider_id),
+    constraint MSTR_WORKSPACE_CONNECTION_MSTR_PROVIDER_null_fk
+        foreign key (provider_id) references MSTR_PROVIDER (id)
+            on delete cascade,
+    constraint MSTR_WORKSPACE_CONNECTION_MSTR_WORKSPACE_null_fk
+        foreign key (workspace_id) references MSTR_WORKSPACE (id)
+            on delete cascade
+    );
+
+    create or replace table cloud_service.MSTR_API_STATISTICS
+    (
+        id            int auto_increment
+            primary key,
+        provider_type int          null,
+        api_path      varchar(127) null,
+        http_status   int          null,
+        http_method   varchar(8)   null,
+        user_id       varchar(36)  null,
+        workspace_id  varchar(36)  null,
+        time          timestamp    null,
+        is_admin      int          null
+    );
+
+  j_maestro_dml.sql: |+
+    insert into maestro.MSTR_PROVIDER_TYPE (id, name, public, description, is_active) values (1, 'Contrabass', 0, 'openstack 공급자', 1); 
+    insert into maestro.MSTR_PROVIDER_TYPE (id, name, public, description, is_active) values (5, 'Kubernetes', 0, '비올라', 0); 
+    insert into maestro.MSTR_PROVIDER_TYPE (id, name, public, description, is_active) values (10, 'VIOLA', 0, 'OpenShift, Kubernetes 공급자', 1);
+
+
+    insert into maestro.MSTR_SOLUTION (id, name, create_user_id, create_time, update_user_id, update_time, description, status, base_user_path, base_admin_path) values ('345864a3-f857-11ed-921d-aa1950d374e1', 'Contrabass', null, null, null, null, null, null, '/v1/contrabass/user', '/v1/contrabass/admin'); 
+    insert into maestro.MSTR_SOLUTION (id, name, create_user_id, create_time, update_user_id, update_time, description, status, base_user_path, base_admin_path) values ('345ae518-f857-11ed-921d-aa1950d374e1', 'Viola', null, null, null, null, null, null, '/v1/viola/user', '/v1/viola/admin'); 
+    insert into maestro.MSTR_SOLUTION (id, name, create_user_id, create_time, update_user_id, update_time, description, status, base_user_path, base_admin_path) values ('f218ba35-f870-11ed-921d-aa1950d374e1', 'CMP', null, null, null, null, null, null, '/v1/maestro/user', '/v1/maestro/admin');
+
+
+    insert into maestro.MSTR_PLATFORM (id, solution_id, name, description, create_user_id, create_time, update_user_id, update_time, status) values ('15350f33-2b9a-11ee-9662-4201ac100113', 'f218ba35-f870-11ed-921d-aa1950d374e1', 'CMP', null, null, '2023-07-26 18:51:45', null, null, 1); 
+    insert into maestro.MSTR_PLATFORM (id, solution_id, name, description, create_user_id, create_time, update_user_id, update_time, status) values ('237e0174-4d4e-11ee-8890-4601e2654b11', '345ae518-f857-11ed-921d-aa1950d374e1', 'Kubernetes', null, null, null, null, null, 1); 
+    insert into maestro.MSTR_PLATFORM (id, solution_id, name, description, create_user_id, create_time, update_user_id, update_time, status) values ('c729d811-ff5e-11ed-921d-aa1950d374e1', '345864a3-f857-11ed-921d-aa1950d374e1', 'Openstack', null, null, '2023-05-31 11:56:39', null, '2023-05-31 11:56:41', 1); 
+    insert into maestro.MSTR_INFRA_FOLDER (id, name, description, create_user_id, create_time, update_user_id, update_time, depth, parent_id, root_infra_id, status) values ('10495b55-df81-11ed-83d1-82fade7d1eda', '데이터센터', '오케스트로 데이터 센터입니다.', '1', '2023-04-20 22:41:33', '0489fc3b-ac89-432c-82ed-63527e09031e', '2023-06-30 06:27:32', 0, null, '10495b55-df81-11ed-83d1-82fade7d1eda', 1);

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: maestro-mariadb
+  labels:
+    app: maestro
+    tier: db
+spec:
+  template:
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb
+          volumeMounts:
+            - name: maestro-mariadb-ddl-sql-config
+              mountPath: /docker-entrypoint-initdb.d/maestro-ddl.sql
+              subPath: maestro-ddl.sql
+            - name: maestro-mariadb-dml-sql-config
+              mountPath: /docker-entrypoint-initdb.d/maestro-dml.sql
+              subPath: maestro-dml.sql
+      volumes:
+        - name: maestro-mariadb-ddl-sql-config
+          configMap:
+            name: maestro-mariadb-ddl-sql-config
+            items:
+              - key: maestro-ddl.sql
+                path: maestro-ddl.sql
+        - name: maestro-mariadb-dml-sql-config
+          configMap:
+            name: maestro-mariadb-dml-sql-config
+            items:
+              - key: maestro-dml.sql
+                path: maestro-dml.sql

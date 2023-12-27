@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: maestro-mariadb-init-sql-config
+  namespace: common-datastore
+data:
+  init.sql: |
+    USE mysql;
+    CREATE user 'maestro'@'%' identified by 'okestro2018';
+    CREATE DATABASE IF NOT EXISTS maestro;
+    CREATE DATABASE IF NOT EXISTS cloud_service;
+    grant ALL PRIVILEGES on *.* to 'maestro'@'%';
+    CREATE user 'contrabass'@'%' identified by 'okestro2018';
+    CREATE DATABASE IF NOT EXISTS contrabass;
+    grant ALL PRIVILEGES on *.* to 'contrabass'@'%';
+    CREATE user 'openshift'@'%' identified by 'okestro2018';
+    CREATE DATABASE IF NOT EXISTS OCP_CONSOLE;
+    CREATE DATABASE IF NOT EXISTS ECP_ADMIN;
+    CREATE DATABASE IF NOT EXISTS ECP_USER;
+    CREATE DATABASE IF NOT EXISTS OKE_DEVOPS;
+    grant ALL PRIVILEGES on *.* to 'openshift'@'%';
+    CREATE user 'admin'@'%' identified by 'cloud1234';
+    grant ALL PRIVILEGES on *.* to 'admin'@'%';
+    flush privileges;
+  

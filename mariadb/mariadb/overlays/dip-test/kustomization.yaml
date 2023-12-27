@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: common-datastore
+resources:
+  - ../../base
+  - maestro-mariadb.configmap.yaml
+
+images:
+  - name: mariadb
+    newName: harbor.okestro-k8s.cld/maestro/maestro/mariadb
+    newTag: 10.11-jammy
+
+patchesStrategicMerge:
+  - patch-pvc.yaml
