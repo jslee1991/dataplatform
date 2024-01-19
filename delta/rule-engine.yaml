@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: vista-rule-engine
+  name: vista-rule-engine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vista-rule-engine
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: vista-rule-engine
+    spec:
+      containers:
+      - image: jaeseung2/rule:local.16
+        imagePullPolicy: Always
+        name: vista-rule-engine
+        ports:
+        - containerPort: 8080
+        resources: {}
+      
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vista-rule-engine
+spec:
+  selector:
+    app: vista-rule-engine
+  ports:
+    - port: 8080
+      targetPort: 8080
