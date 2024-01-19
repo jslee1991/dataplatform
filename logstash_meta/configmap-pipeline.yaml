@@ -1,0 +1,53 @@
+---
+# Source: logstash/templates/configmap-pipeline.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-pipeline
+  labels:
+    app: "release-name-logstash"
+    chart: "logstash"
+    heritage: "Helm"
+    release: "release-name"
+data:
+  topic-contrabass.conf: |
+    input { http { port => "5200" codec => json } }
+    filter { mutate { add_field => { "[@ctime]" => "%{[@timestamp]}" } add_field => { "[@itime]" => "%{[@timestamp]}" } }
+    if [fields][object_id] { mutate { copy => { "[fields][object_id]" => "[object_id]" } } } if [fields][identifier] { mutate { copy => { "[fields][identifier]" => "[identifier]" } } }
+    if [agent][type] == "metricbeat" { if [system][core][total][pct] { ruby { code => "event.set('[system][core][total][pct]', (event.get('[system][core][total][pct]') * 100.0).round(2))" } }
+    if [system][core][user][pct] { ruby { code => "event.set('[system][core][user][pct]', (event.get('[system][core][user][pct]') * 100.0).round(2))" } }
+    if [system][core][system][pct] { ruby { code => "event.set('[system][core][system][pct]', (event.get('[system][core][system][pct]') * 100.0).round(2))" } }
+    if [system][core][nice][pct] { ruby { code => "event.set('[system][core][nice][pct]', (event.get('[system][core][nice][pct]') * 100.0).round(2))" } }
+    if [system][core][idle][pct] { ruby { code => "event.set('[system][core][idle][pct]', (event.get('[system][core][idle][pct]') * 100.0).round(2))" } }
+    if [system][core][iowait][pct] { ruby { code => "event.set('[system][core][iowait][pct]', (event.get('[system][core][iowait][pct]') * 100.0).round(2))" } }
+    if [system][core][irq][pct] { ruby { code => "event.set('[system][core][irq][pct]', (event.get('[system][core][irq][pct]') * 100.0).round(2))" } }
+    if [system][core][softirq][pct] { ruby { code => "event.set('[system][core][softirq][pct]', (event.get('[system][core][softirq][pct]') * 100.0).round(2))" } }
+    if [system][core][steal][pct] { ruby { code => "event.set('[system][core][steal][pct]', (event.get('[system][core][steal][pct]') * 100.0).round(2))" } }
+    
+    if [system][cpu][user][pct] { ruby { code => "event.set('[system][cpu][user][pct]', (event.get('[system][cpu][user][pct]') * 100.0).round(2))" } }
+    if [system][cpu][system][pct] { ruby { code => "event.set('[system][cpu][system][pct]', (event.get('[system][cpu][system][pct]') * 100.0).round(2))" } }
+    if [system][cpu][nice][pct] { ruby { code => "event.set('[system][cpu][nice][pct]', (event.get('[system][cpu][nice][pct]') * 100.0).round(2))" } }
+    if [system][cpu][idle][pct] { ruby { code => "event.set('[system][cpu][idle][pct]', (event.get('[system][cpu][idle][pct]') * 100.0).round(2))" } }
+    if [system][cpu][iowait][pct] { ruby { code => "event.set('[system][cpu][iowait][pct]', (event.get('[system][cpu][iowait][pct]') * 100.0).round(2))" } }
+    if [system][cpu][irq][pct] { ruby { code => "event.set('[system][cpu][irq][pct]', (event.get('[system][cpu][irq][pct]') * 100.0).round(2))" } }
+    if [system][cpu][softirq][pct] { ruby { code => "event.set('[system][cpu][softirq][pct]', (event.get('[system][cpu][softirq][pct]') * 100.0).round(2))" } }
+    if [system][cpu][steal][pct] { ruby { code => "event.set('[system][cpu][steal][pct]', (event.get('[system][cpu][steal][pct]') * 100.0).round(2))" } }
+    if [system][cpu][total][pct] { ruby { code => "event.set('[system][cpu][total][pct]', (event.get('[system][cpu][total][pct]') * 100.0).round(2))" } }
+    if [system][cpu][user][norm][pct] { ruby { code => "event.set('[system][cpu][user][norm][pct]', (event.get('[system][cpu][user][norm][pct]') * 100.0).round(2))" } }
+    if [system][cpu][system][norm][pct] { ruby { code => "event.set('[system][cpu][system][norm][pct]', (event.get('[system][cpu][system][norm][pct]') * 100.0).round(2))" } }
+    if [system][cpu][nice][norm][pct] { ruby { code => "event.set('[system][cpu][nice][norm][pct]', (event.get('[system][cpu][nice][norm][pct]') * 100.0).round(2))" } }
+    if [system][cpu][idle][norm][pct] { ruby { code => "event.set('[system][cpu][idle][norm][pct]', (event.get('[system][cpu][idle][norm][pct]') * 100.0).round(2))" } }
+    if [system][cpu][iowait][norm][pct] { ruby { code => "event.set('[system][cpu][iowait][norm][pct]', (event.get('[system][cpu][iowait][norm][pct]') * 100.0).round(2))" } }
+    if [system][cpu][irq][norm][pct] { ruby { code => "event.set('[system][cpu][irq][norm][pct]', (event.get('[system][cpu][irq][norm][pct]') * 100.0).round(2))" } }
+    if [system][cpu][softirq][norm][pct] { ruby { code => "event.set('[system][cpu][softirq][norm][pct]', (event.get('[system][cpu][softirq][norm][pct]') * 100.0).round(2))" } }
+    if [system][cpu][steal][norm][pct] { ruby { code => "event.set('[system][cpu][steal][norm][pct]', (event.get('[system][cpu][steal][norm][pct]') * 100.0).round(2))" } }
+    if [system][cpu][total][norm][pct] { ruby { code => "event.set('[system][cpu][total][norm][pct]', (event.get('[system][cpu][total][norm][pct]') * 100.0).round(2))" } }
+    
+    if [system][entropy][pct] { ruby { code => "event.set('[system][entropy][pct]', (event.get('[system][entropy][pct]') * 100.0).round(2))" } }
+    
+    if [system][filesystem][used][pct] { ruby { code => "event.set('[system][filesystem][used][pct]', (event.get('[system][filesystem][used][pct]') * 100.0).round(2))" } }
+    if [system][memory][used][pct] { ruby { code => "event.set('[system][memory][used][pct]', (event.get('[system][memory][used][pct]') * 100.0).round(2))" } }
+    if [system][memory][actual][used][pct] { ruby { code => "event.set('[system][memory][actual][used][pct]', (event.get('[system][memory][actual][used][pct]') * 100.0).round(2))" } }
+    if [system][memory][swap][used][pct] { ruby { code => "event.set('[system][memory][swap][used][pct]', (event.get('[system][memory][swap][used][pct]') * 100.0).round(2))" } } } }
+    output { stdout { codec => rubydebug } kafka { bootstrap_servers => "kafka-cluster-kafka-bootstrap.hwson.svc:9092" topic_id => ["tuba-meta-topic"] codec => "json" }
+    }

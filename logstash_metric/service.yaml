@@ -1,0 +1,29 @@
+---
+# Source: logstash/templates/service.yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: "logstash"
+  labels:
+    app: "release-name-logstash"
+    chart: "logstash"
+    heritage: "Helm"
+    release: "release-name"
+  annotations:
+    null
+spec:
+  type: NodePort
+  selector:
+    app: "release-name-logstash"
+    chart: "logstash"
+    release: "release-name"
+  ports:
+    - name: tcp
+      port: 5000
+      protocol: TCP
+      targetPort: 5000
+    - name: tcp2
+      port: 5100
+      protocol: TCP
+      targetPort: 5100
+
